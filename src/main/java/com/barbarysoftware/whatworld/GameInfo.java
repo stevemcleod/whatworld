@@ -48,4 +48,8 @@ public class GameInfo {
     public void setThisLooptime(long thisLooptime) {
         this.thisLooptime = thisLooptime;
     }
+
+    public long getTimeDelta() {
+        return thisLooptime - lastLooptime;
+    }
 }

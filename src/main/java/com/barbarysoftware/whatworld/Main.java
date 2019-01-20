@@ -10,6 +10,7 @@ public class Main {
     private Canvas canvas;
 
     private GameInfo gameInfo = new GameInfo();
+    private World world = new World();
 
     private MouseEvent currentMouseStatus;
 
@@ -27,6 +28,7 @@ public class Main {
 
         long lastLooptime = System.currentTimeMillis();
         gameInfo.setLastLooptime(lastLooptime);
+
         while (true) {
             gameInfo.setThisLooptime(System.currentTimeMillis());
             processInput();
@@ -41,6 +43,7 @@ public class Main {
         JFrame frame = new JFrame("What World");
         canvas = new Canvas();
         canvas.setGameInfo(gameInfo);
+        canvas.setWorld(world);
 
         // catch any mouseclicks on canvas
         canvas.addMouseListener(new MouseAdapter() {
@@ -67,6 +70,7 @@ public class Main {
     }
 
     private void update() {
+        world.update(gameInfo);
         // todo
     }
 
@@ -86,6 +90,8 @@ public class Main {
                     break;
 
                 case PLAYING:
+                    world.getPlayerSprite().moveTo(status.getX(), status.getY());
+
                     int score = currentGameInfo.getScore();
                     score += (currentGameInfo.getThisLooptime() - currentGameInfo.getLastLooptime());
                     currentGameInfo.setScore(score);

@@ -9,8 +9,8 @@ public class Canvas extends JPanel {
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
 
-    private PlayerSprite playerSprite = new PlayerSprite(WIDTH / 2, HEIGHT / 2);
     private GameInfo gameInfo;
+    private World world;
 
     Canvas() {
         setBorder(BorderFactory.createLineBorder(Color.BLACK));
@@ -63,7 +63,7 @@ public class Canvas extends JPanel {
         String str;
         str = "Score: " + NumberFormat.getNumberInstance().format(gameInfo.getScore());
         g.drawString(str, 20, 20);
-        playerSprite.paint(g);
+        world.getPlayerSprite().paint(g);
     }
 
     private void paintGameOver(Graphics g) {
@@ -85,5 +85,9 @@ public class Canvas extends JPanel {
 
     public void setGameInfo(GameInfo gameInfo) {
         this.gameInfo = gameInfo;
+    }
+
+    public void setWorld(World world) {
+        this.world = world;
     }
 }
