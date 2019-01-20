@@ -50,29 +50,29 @@ public class PlayerSprite {
         targetY = y;
     }
 
-    public void update(GameInfo gameInfo) {
-
-        long delta = gameInfo.getTimeDelta();
+    public void update(GameInfo gameInfo, long elapsed) {
 
         double speed = 50d;
 
-        if (x < targetX) {
-            x += delta / speed;
-            if (x > targetX) x = targetX;
+        double movementAmount = elapsed / speed;
+
+        if (this.x < targetX) {
+            this.x += movementAmount;
+            if (this.x > targetX) this.x = targetX;
         }
 
         if (y < targetY) {
-            y += delta / speed;
+            y += movementAmount;
             if (y > targetY) y = targetY;
         }
 
-        if (x > targetX) {
-            x -= delta / speed;
-            if (x < targetX) x = targetX;
+        if (this.x > targetX) {
+            this.x -= movementAmount;
+            if (this.x < targetX) this.x = targetX;
         }
 
         if (y > targetY) {
-            y -= delta / speed;
+            y -= movementAmount;
             if (y < targetY) y = targetY;
         }
 

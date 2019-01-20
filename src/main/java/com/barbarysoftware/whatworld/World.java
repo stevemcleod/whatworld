@@ -9,7 +9,7 @@ public class World {
         return playerSprite;
     }
 
-    public void update(GameInfo gameInfo) {
-        playerSprite.update(gameInfo);
+    public void update(GameInfo gameInfo, long elapsed) {
+        playerSprite.update(gameInfo, elapsed);
     }
 }

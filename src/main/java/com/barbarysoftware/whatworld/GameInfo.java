@@ -49,7 +49,4 @@ public class GameInfo {
         this.thisLooptime = thisLooptime;
     }
 
-    public long getTimeDelta() {
-        return thisLooptime - lastLooptime;
-    }
 }

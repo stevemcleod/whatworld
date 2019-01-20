@@ -14,8 +14,7 @@ public class Main {
 
     private MouseEvent currentMouseStatus;
 
-
-    public Main() {
+    private Main() {
     }
 
     public static void main(String[] args) throws InvocationTargetException, InterruptedException {
@@ -29,12 +28,39 @@ public class Main {
         long lastLooptime = System.currentTimeMillis();
         gameInfo.setLastLooptime(lastLooptime);
 
+        long start = System.currentTimeMillis();
+        int desiredFrameRate = 120; // fps
+        long millisPerUpdate = 1000 / desiredFrameRate;
+        System.out.println("millisPerUpdate = " + millisPerUpdate);
+
+        long previous = System.currentTimeMillis();
+
+        long frameCount = 0;
         while (true) {
-            gameInfo.setThisLooptime(System.currentTimeMillis());
+            long current = System.currentTimeMillis();
+            long elapsed = current - previous;
+            previous = current;
+
+            gameInfo.setThisLooptime(current);
+
             processInput();
-            update();
+            update(elapsed);
             render();
-            gameInfo.setLastLooptime(gameInfo.getThisLooptime());
+
+            frameCount++;
+            if (frameCount % 100 == 0 ) {
+                long totalSeconds = (current - start)/1000;
+                if (totalSeconds > 0) {
+                    long fps = frameCount / totalSeconds;
+                    System.out.println("fps = " + fps);
+                }
+            }
+
+            long sleepTime = current + millisPerUpdate - System.currentTimeMillis();
+            if (sleepTime > 0) {
+                Thread.sleep(sleepTime);
+            }
+            gameInfo.setLastLooptime(current);
         }
 
     }
@@ -69,9 +95,8 @@ public class Main {
 
     }
 
-    private void update() {
-        world.update(gameInfo);
-        // todo
+    private void update(long elapsed) {
+        world.update(gameInfo, elapsed);
     }
 
     private void processInput() {
@@ -110,8 +135,8 @@ public class Main {
         }
     }
 
-    private void render() {
-        canvas.repaint();
+    private void render() throws InvocationTargetException, InterruptedException {
+        SwingUtilities.invokeAndWait(() -> canvas.repaint());
     }
 
 }
