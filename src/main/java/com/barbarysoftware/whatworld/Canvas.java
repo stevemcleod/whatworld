@@ -2,8 +2,6 @@ package com.barbarysoftware.whatworld;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.text.NumberFormat;
 
 public class Canvas extends JPanel {
@@ -11,46 +9,12 @@ public class Canvas extends JPanel {
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
 
-    private int clickCount = 0;
-    private GameState gameState = GameState.WAITING_TO_START;
-
     private PlayerSprite playerSprite = new PlayerSprite(WIDTH / 2, HEIGHT / 2);
+    private GameInfo gameInfo;
 
     Canvas() {
         setBorder(BorderFactory.createLineBorder(Color.BLACK));
         setOpaque(true);
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                switch (gameState) {
-
-                    case WAITING_TO_START:
-                        clickCount = 0;
-                        gameState = GameState.PLAYING;
-                        break;
-
-                    case PLAYING:
-                        moveMe(e.getX(), e.getY());
-                        clickCount++;
-                        if (clickCount >= 10) {
-                            gameState = GameState.GAME_OVER;
-                        }
-                        break;
-
-                    case GAME_OVER:
-                        clickCount = 0;
-                        gameState = GameState.PLAYING;
-                        break;
-                }
-                repaint();
-
-            }
-        });
-    }
-
-    private void moveMe(int x, int y) {
-        playerSprite.setX(x);
-        playerSprite.setY(y);
     }
 
     @Override
@@ -64,21 +28,21 @@ public class Canvas extends JPanel {
         g.setColor(Color.DARK_GRAY);
         g.fillRect(0, 0, getWidth(), getHeight());
 
-        switch (gameState) {
+        switch (gameInfo.getGameState()) {
             case WAITING_TO_START:
-                doWaitingToStartPaint(g);
+                paintWaitingToStart(g);
                 break;
             case PLAYING:
-                doPlayingPaint(g);
+                paintPlaying(g);
                 break;
             case GAME_OVER:
-                doGameOverPaint(g);
+                paintGameOver(g);
                 break;
         }
 
     }
 
-    private void doWaitingToStartPaint(Graphics g) {
+    private void paintWaitingToStart(Graphics g) {
         drawInstructions(g, "Welcome to What World", "Click anywhere to start");
     }
 
@@ -94,16 +58,32 @@ public class Canvas extends JPanel {
         g.drawString(subtext, (getWidth() - sw2) / 2, (int) ((getHeight() - sh) / 2 + sh * 1.2));
     }
 
-    private void doPlayingPaint(Graphics g) {
+    private void paintPlaying(Graphics g) {
         g.setColor(Color.WHITE);
         String str;
-        str = "Score: " + NumberFormat.getNumberInstance().format(clickCount * 1000);
+        str = "Score: " + NumberFormat.getNumberInstance().format(gameInfo.getScore());
         g.drawString(str, 20, 20);
         playerSprite.paint(g);
     }
 
-    private void doGameOverPaint(Graphics g) {
-        drawInstructions(g, "You won! Congratulations.", "Click anywhere to restart");
+    private void paintGameOver(Graphics g) {
+        long l = (System.currentTimeMillis() / 10) % 360;
+        double v = Math.sin(Math.toRadians(l));
+        int v1 = (int) (v * 50);
+
+
+        g.setColor(new Color(205 + v1, 0, 0));
+        g.fillRect(0, 0, getWidth(), getHeight());
+        String subtext;
+        if (gameInfo.getThisLooptime() - gameInfo.getGameOverTime() > 1000) {
+            subtext = "Click anywhere to restart";
+        } else {
+            subtext = "";
+        }
+        drawInstructions(g, "You won! Congratulations.", subtext);
     }
 
+    public void setGameInfo(GameInfo gameInfo) {
+        this.gameInfo = gameInfo;
+    }
 }
