@@ -4,13 +4,15 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.NumberFormat;
 
 public class Canvas extends JPanel {
 
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
-    private static final int MY_WIDTH = 10;
-    private static final int MY_HEIGHT = 10;
+
+    private int clickCount = 0;
+    private boolean gameOver = false;
 
     private PlayerSprite playerSprite = new PlayerSprite(WIDTH / 2, HEIGHT / 2);
 
@@ -20,7 +22,19 @@ public class Canvas extends JPanel {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                moveMe(e.getX(), e.getY());
+                if (gameOver) {
+                    clickCount = 0;
+                    gameOver = false;
+                } else {
+                    moveMe(e.getX(), e.getY());
+                    clickCount++;
+                    if (clickCount >= 10) {
+                        gameOver = true;
+                    }
+                }
+
+                repaint();
+
             }
         });
     }
@@ -28,7 +42,6 @@ public class Canvas extends JPanel {
     private void moveMe(int x, int y) {
         playerSprite.setX(x);
         playerSprite.setY(y);
-        repaint();
     }
 
     @Override
@@ -40,41 +53,23 @@ public class Canvas extends JPanel {
     protected void paintComponent(Graphics g) {
         g.setColor(Color.DARK_GRAY);
         g.fillRect(0, 0, getWidth(), getHeight());
-        g.drawString("Hello What World", 20, 20);
+        g.setColor(Color.WHITE);
+        String str;
+        if (gameOver) {
+            str = "You won! Congratulations. Click anywhere to restart.";
+
+        } else {
+            if (clickCount > 0) {
+                str = "Score: " + NumberFormat.getNumberInstance().format(clickCount * 1000);
+            } else {
+                str = "Welcome to What World.";
+
+            }
+
+        }
+        g.drawString(str, 20, 20);
         playerSprite.paint(g);
+
     }
 
-    public static class PlayerSprite {
-        private int x;
-        private int y;
-
-        public PlayerSprite(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        public void setX(int x) {
-            this.x = x;
-        }
-
-        public void setY(int y) {
-            this.y = y;
-        }
-
-        public int getX() {
-            return x;
-        }
-
-        public int getY() {
-            return y;
-        }
-
-        public void paint(Graphics g) {
-            g.setColor(Color.RED);
-            g.fillOval(x - MY_WIDTH / 2, y - MY_HEIGHT / 2, MY_WIDTH, MY_HEIGHT);
-            g.setColor(Color.BLACK);
-            g.drawOval(x - MY_WIDTH / 2, y - MY_HEIGHT / 2, MY_WIDTH, MY_HEIGHT);
-
-        }
-    }
 }
