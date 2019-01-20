@@ -4,10 +4,17 @@
 
 A really ordinary computer game.
 
+
+## Download
+
+[Download What World 1.0 now](https://github.com/stevemcleod/whatworld/raw/master/releases/whatworld-1.0.jar).
+
 ## How do I run it?
 
-1. Download the [latest release (1.0)](https://github.com/stevemcleod/whatworld/raw/master/releases/whatworld-1.0.jar).
-2. Install Java 8 or higher.
-3. From the command line, go to the folder containing the download from step 1.
-4. From the command line, run `java -jar whatworld-1.0.jar` 
+1. Install Java 8 or higher on your computer, if you don't already it installed. 
+2. Go to the folder that contains the download and double-click on it.
+
+You should now see the most basic of gaming experiences.
+
+Found a problem? Got a feature request? [Report them here](https://github.com/stevemcleod/whatworld/issues).
 
