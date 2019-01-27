@@ -4,10 +4,12 @@
 
 A really ordinary computer game.
 
+Now with Black Jack! And fiery death! And tiles!
+
 
 ## Download
 
-[Download What World 2.0 now](https://github.com/stevemcleod/whatworld/raw/master/releases/whatworld-2.0.jar).
+[Download What World 3.0 now](https://github.com/stevemcleod/whatworld/raw/master/releases/whatworld-3.0.jar).
 
 ## How do I run it?
 
