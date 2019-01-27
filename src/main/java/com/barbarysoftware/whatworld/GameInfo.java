@@ -3,9 +3,10 @@ package com.barbarysoftware.whatworld;
 public class GameInfo {
 
     private GameState gameState = GameState.WAITING_TO_START;
-    private int score = 0;
     private long lastLooptime;
     private long thisLooptime;
+
+    private String gameResult;
 
     private long gameOverTime = 0;
 
@@ -15,14 +16,6 @@ public class GameInfo {
 
     public void setGameState(GameState gameState) {
         this.gameState = gameState;
-    }
-
-    public int getScore() {
-        return score;
-    }
-
-    public void setScore(int score) {
-        this.score = score;
     }
 
     public void setGameOverTime(long gameOverTime) {
@@ -49,4 +42,11 @@ public class GameInfo {
         this.thisLooptime = thisLooptime;
     }
 
+    public String getGameResult() {
+        return gameResult;
+    }
+
+    public void setGameResult(String gameResult) {
+        this.gameResult = gameResult;
+    }
 }

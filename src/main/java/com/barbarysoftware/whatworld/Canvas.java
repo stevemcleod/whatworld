@@ -2,15 +2,18 @@ package com.barbarysoftware.whatworld;
 
 import javax.swing.*;
 import java.awt.*;
-import java.text.NumberFormat;
 
 public class Canvas extends JPanel {
 
-    private static final int WIDTH = 800;
-    private static final int HEIGHT = 600;
+    private static final int TILE_WIDTH = 48;
+    private static final int TILE_HEIGHT = 48;
+
+    private static final int WIDTH = 20 * TILE_WIDTH;
+    private static final int HEIGHT = 15 * TILE_HEIGHT;
 
     private GameInfo gameInfo;
     private World world;
+    private Tiles tiles = Tiles.getInstance();
 
     Canvas() {
         setBorder(BorderFactory.createLineBorder(Color.BLACK));
@@ -25,8 +28,7 @@ public class Canvas extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
 
-        g.setColor(Color.DARK_GRAY);
-        g.fillRect(0, 0, getWidth(), getHeight());
+        drawFloor(g);
 
         switch (gameInfo.getGameState()) {
             case WAITING_TO_START:
@@ -40,6 +42,21 @@ public class Canvas extends JPanel {
                 break;
         }
 
+    }
+
+    private void drawFloor(Graphics g) {
+        g.setColor(Color.LIGHT_GRAY);
+        g.fillRect(0, 0, getWidth(), getHeight());
+
+        int[][] floor = world.getFloor();
+        for (int y = 0; y < floor.length; y++) {
+            int[] row = floor[y];
+            for (int x = 0; x < row.length; x++) {
+
+                int tileType = row[x];
+                tiles.draw(g, tileType, x * TILE_WIDTH, y * TILE_HEIGHT, x * TILE_WIDTH + 48, y * TILE_HEIGHT + 48);
+            }
+        }
     }
 
     private void paintWaitingToStart(Graphics g) {
@@ -60,27 +77,17 @@ public class Canvas extends JPanel {
 
     private void paintPlaying(Graphics g) {
         g.setColor(Color.WHITE);
-        String str;
-        str = "Score: " + NumberFormat.getNumberInstance().format(gameInfo.getScore());
-        g.drawString(str, 20, 20);
         world.getPlayerSprite().paint(g);
     }
 
     private void paintGameOver(Graphics g) {
-        long l = (System.currentTimeMillis() / 10) % 360;
-        double v = Math.sin(Math.toRadians(l));
-        int v1 = (int) (v * 50);
-
-
-        g.setColor(new Color(205 + v1, 0, 0));
-        g.fillRect(0, 0, getWidth(), getHeight());
         String subtext;
         if (gameInfo.getThisLooptime() - gameInfo.getGameOverTime() > 1000) {
             subtext = "Click anywhere to restart";
         } else {
             subtext = "";
         }
-        drawInstructions(g, "You won! Congratulations.", subtext);
+        drawInstructions(g, gameInfo.getGameResult(), subtext);
     }
 
     public void setGameInfo(GameInfo gameInfo) {

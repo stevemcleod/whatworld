@@ -10,15 +10,11 @@ public class PlayerSprite {
     private double x;
     private double y;
 
-    private double targetX;
-    private double targetY;
+    private Tiles tiles = Tiles.getInstance();
 
 
-    public PlayerSprite(int x, int y) {
-        this.x = x;
-        this.y = y;
-        this.targetX = x;
-        this.targetY = y;
+    public PlayerSprite() {
+        reset();
     }
 
     public void setX(double x) {
@@ -38,43 +34,39 @@ public class PlayerSprite {
     }
 
     public void paint(Graphics g) {
-        g.setColor(Color.RED);
-        g.fillOval((int) x - WIDTH / 2, (int) y - HEIGHT / 2, WIDTH, HEIGHT);
-        g.setColor(Color.BLACK);
-        g.drawOval((int) x - WIDTH / 2, (int) y - HEIGHT / 2, WIDTH, HEIGHT);
+        // 128, 36, 16, 28
+        tiles.draw(g, 4, (int) x, (int) y - 28 * 3, (int) x + 16 * 3, (int) y);
 
     }
 
     public void moveTo(int x, int y) {
-        targetX = x;
-        targetY = y;
+        this.x = x;
+        this.y = y;
     }
 
-    public void update(GameInfo gameInfo, long elapsed) {
-
-        double speed = 50d;
-
-        double movementAmount = elapsed / speed;
-
-        if (this.x < targetX) {
-            this.x += movementAmount;
-            if (this.x > targetX) this.x = targetX;
+    public void update(World world, GameInfo gameInfo, long elapsed) {
+        if (gameInfo.getGameState() != GameState.PLAYING) {
+            return;
         }
 
-        if (y < targetY) {
-            y += movementAmount;
-            if (y > targetY) y = targetY;
+        int tile = world.getTileAt(x, y);
+
+        if (tile == 2) {
+            gameInfo.setGameState(GameState.GAME_OVER);
+            gameInfo.setGameOverTime(gameInfo.getThisLooptime());
+            gameInfo.setGameResult("You burnt to death!");
+
+        } else if (tile == 3) {
+            gameInfo.setGameState(GameState.GAME_OVER);
+            gameInfo.setGameOverTime(gameInfo.getThisLooptime());
+            gameInfo.setGameResult("You escaped to the Black Jack room!");
+
         }
 
-        if (this.x > targetX) {
-            this.x -= movementAmount;
-            if (this.x < targetX) this.x = targetX;
-        }
+    }
 
-        if (y > targetY) {
-            y -= movementAmount;
-            if (y < targetY) y = targetY;
-        }
-
+    public void reset() {
+        x = 400;
+        y = 300;
     }
 }

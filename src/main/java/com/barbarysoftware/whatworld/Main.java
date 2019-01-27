@@ -3,6 +3,7 @@ package com.barbarysoftware.whatworld;
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 public class Main {
@@ -23,7 +24,13 @@ public class Main {
     }
 
     private void createAndStart() throws InvocationTargetException, InterruptedException {
-        SwingUtilities.invokeAndWait(this::createAndShowGui);
+        SwingUtilities.invokeAndWait(() -> {
+            try {
+                createAndShowGui();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
 
         long lastLooptime = System.currentTimeMillis();
         gameInfo.setLastLooptime(lastLooptime);
@@ -48,8 +55,8 @@ public class Main {
             render();
 
             frameCount++;
-            if (frameCount % 100 == 0 ) {
-                long totalSeconds = (current - start)/1000;
+            if (frameCount % 100 == 0) {
+                long totalSeconds = (current - start) / 1000;
                 if (totalSeconds > 0) {
                     long fps = frameCount / totalSeconds;
                     System.out.println("fps = " + fps);
@@ -65,13 +72,13 @@ public class Main {
 
     }
 
-    private void createAndShowGui() {
+    private void createAndShowGui() throws IOException {
         JFrame frame = new JFrame("What World");
         canvas = new Canvas();
         canvas.setGameInfo(gameInfo);
         canvas.setWorld(world);
 
-        // catch any mouseclicks on canvas
+        // catch any mouse clicks on canvas
         canvas.addMouseListener(new MouseAdapter() {
             // todo find a more performant way to do this
             @Override
@@ -115,19 +122,24 @@ public class Main {
                     break;
 
                 case PLAYING:
-                    world.getPlayerSprite().moveTo(status.getX(), status.getY());
 
-                    int score = currentGameInfo.getScore();
-                    score += (currentGameInfo.getThisLooptime() - currentGameInfo.getLastLooptime());
-                    currentGameInfo.setScore(score);
-                    if (score >= 5_000) {
-                        currentGameInfo.setGameState(GameState.GAME_OVER);
-                        currentGameInfo.setGameOverTime(currentGameInfo.getThisLooptime());
+                    int worldX = status.getX();
+                    int worldY = status.getY();
+
+                    int tile = world.getTileAt(worldX, worldY);
+                    if (tile == 1) {
+                        // can't move onto wall
+                    } else {
+                        world.getPlayerSprite().moveTo(worldX, worldY);
+
                     }
+
                     break;
+
                 case GAME_OVER:
-                    if (currentGameInfo.getThisLooptime() - currentGameInfo.getGameOverTime() > 1000) {
-                        currentGameInfo.setScore(0);
+                    long millisSinceGameOver = currentGameInfo.getThisLooptime() - currentGameInfo.getGameOverTime();
+                    if (millisSinceGameOver > 1000) {
+                        world.getPlayerSprite().reset();
                         currentGameInfo.setGameState(GameState.PLAYING);
                     }
                     break;
