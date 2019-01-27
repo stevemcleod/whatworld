@@ -60,19 +60,27 @@ public class Canvas extends JPanel {
     }
 
     private void paintWaitingToStart(Graphics g) {
-        drawInstructions(g, "Welcome to What World", "Click anywhere to start");
+        drawInstructions(g, "Welcome to What World", "Now with tiles and black jack", "Click anywhere to start");
     }
 
-    private void drawInstructions(Graphics g, String text, String subtext) {
+    private void drawInstructions(Graphics g, String heading, String subheading, String line3) {
+
         g.setColor(Color.WHITE);
         g.setFont(new Font("SansSerif", Font.PLAIN, 40));
-        int sw = g.getFontMetrics().stringWidth(text);
+        int sw = g.getFontMetrics().stringWidth(heading);
         int sh = g.getFontMetrics().getHeight();
-        g.drawString(text, (getWidth() - sw) / 2, (getHeight() - sh) / 2);
+        g.drawString(heading, (getWidth() - sw) / 2, (getHeight() - sh) / 2);
 
         g.setFont(new Font("SansSerif", Font.PLAIN, 20));
-        int sw2 = g.getFontMetrics().stringWidth(subtext);
-        g.drawString(subtext, (getWidth() - sw2) / 2, (int) ((getHeight() - sh) / 2 + sh * 1.2));
+        int sw2 = g.getFontMetrics().stringWidth(subheading);
+        int sh2 = g.getFontMetrics().getHeight();
+        g.drawString(subheading, (getWidth() - sw2) / 2, (int) ((getHeight() - sh) * 0.55));
+
+        g.setFont(new Font("SansSerif", Font.PLAIN, 20));
+        int sw3 = g.getFontMetrics().stringWidth(line3);
+        int sh3 = g.getFontMetrics().getHeight();
+        g.drawString(line3, (getWidth() - sw3) / 2, (int) ((getHeight() - sh3) * 0.65));
+
     }
 
     private void paintPlaying(Graphics g) {
@@ -81,13 +89,8 @@ public class Canvas extends JPanel {
     }
 
     private void paintGameOver(Graphics g) {
-        String subtext;
-        if (gameInfo.getThisLooptime() - gameInfo.getGameOverTime() > 1000) {
-            subtext = "Click anywhere to restart";
-        } else {
-            subtext = "";
-        }
-        drawInstructions(g, gameInfo.getGameResult(), subtext);
+        boolean showRestartMessage = gameInfo.getThisLooptime() - gameInfo.getGameOverTime() > 1000;
+        drawInstructions(g, gameInfo.getGameResult(), "", showRestartMessage ? "Click anywhere to restart" : "");
     }
 
     public void setGameInfo(GameInfo gameInfo) {
