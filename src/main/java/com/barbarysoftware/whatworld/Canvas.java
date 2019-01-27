@@ -45,7 +45,7 @@ public class Canvas extends JPanel {
     }
 
     private void drawFloor(Graphics g) {
-        g.setColor(Color.LIGHT_GRAY);
+        g.setColor(Color.BLACK);
         g.fillRect(0, 0, getWidth(), getHeight());
 
         int[][] floor = world.getFloor();
